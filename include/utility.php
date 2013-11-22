@@ -165,6 +165,9 @@ class CACHE {
     static function get_token_key( $uid ) {
         return $uid . ':WEIBO_TOKEN';
     }
+    static function get_start_key( $uid ) {
+        return $uid . ':START';
+    }
 }
 
 
@@ -187,5 +190,91 @@ class TIMER {
     }
     function spent() {
         return '<br>' . ($this->StopTime - $this->StartTime) . '(s)<br>';
+    }
+
+    /**
+     * 检查时间戳是否合法
+     *
+     */
+    public static function valid( $timestamp ) {
+        if( !is_string($timestamp) || !is_numeric($timestamp) || strlen( $timestamp ) != 13 )
+            USER::fatal( '时间戳格式非法' );
+    }
+}
+
+
+/**
+ * USER
+ * 
+ */
+class USER {
+    /**
+     * 向用户输出信息
+     *
+     */
+    public static function send( $status, $data = null ) {
+        // 基本返回值
+        $return = array(
+            'status' => $status,
+        );
+        // 如果有额外数据就带上
+        if( $data ) $return = array_merge($return, $data);
+        // 搞成json送出
+        var_dump($return);
+        // echo json_encode($return);
+    }
+
+    /**
+     * OK
+     * 
+     */
+    public static function ok( $data = null ) {
+        USER::send( 'OK', $data );
+    }
+
+    /**
+     * 输出错误信息
+     *
+     */
+    public static function error( $message = '', $data = null ) {
+        // 错误信息
+        $error = array(
+            'message' => $message,
+        );
+        // 带上额外数据
+        if( $data ) $error = array_merge( $error, $data );
+        # 送出
+        USER::send( 'error', $error );
+    }
+
+    /**
+     * 输出错误信息并终止php运行
+     * 
+     */
+    public static function fatal( $message = null, $data = null ) {
+        USER::error( $message, $data );
+        exit();
+    }
+
+    /**
+     * 检查用户身份
+     * 
+     */
+    public static function valid( $uid, $token ) {
+        $cache = new CACHE();
+        $token_in_cache = $cache->get( CACHE::get_token_key($uid) );
+
+        // 缓存中没有token信息，大概是过期了？
+        if( !$token_in_cache ) {
+            USER::fatal( '微博授权过期，请重新登陆' );
+        }
+        // 有token但与用户传递来的不同
+        else if( $token != $token_in_cache ) {
+            // 清除缓存中的token
+            $cache->delete( CACHE::get_token_key($uid) );
+            USER::fatal( '微博授权异常，请重新登陆' );
+        }
+        // 没有问题
+        return true;
     }
 }

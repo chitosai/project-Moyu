@@ -5,7 +5,7 @@
  */
 session_start();
 
-include_once( '../include/accounts.php');
+include_once( '../include/config.php');
 include_once( '../include/utility.php');
 
 include_once( 'saetv2.ex.class.php' );
@@ -27,6 +27,7 @@ if (isset($_REQUEST['code'])) {
  * 
  */
 
+
 if ($token) {
     // var_dump($token);
     // 授权成功
@@ -35,7 +36,7 @@ if ($token) {
     // 保存用户数据
     $cache = new CACHE();
     // 保存token
-    $cache->set( CACHE::get_token_key($token['uid']), $token['access_token'], 0, $token['expires_in'] );
+    $r = $cache->set( CACHE::get_token_key($token['uid']), $token['access_token'], 0, $token['expires_in'] );
 } else {
     echo '授权失败。';
 }
