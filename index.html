@@ -15,7 +15,7 @@
         <!-- 已登录 -->
         <div id="user">
             <span id="logout">
-                我<img src="" id="user-avatar"><span id="username"></span>又来摸鱼了
+                我<img src="" id="user-avatar"><span id="username"></span>又来摸鱼了！
             </span>
         </div>
     </div>
@@ -49,9 +49,9 @@
                     success  : function(json) {
                         // ok
                         var data = JSON.parse(json);
-                        if( data.status == 'OK' ) {
-                            $('#wrapper a').show();
-                            $('#moyu-' + type).hide();
+                        if( data.status == 'TRUE' ) {
+                            $('#moyu-end').show();
+                            $('#moyu-start').hide();
                         }
                     },
                     error   : function(xhr, type) {
