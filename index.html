@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <title>Project · 摸鱼</title>
+    <link rel="stylesheet" href="static/moyu.css">
+</head>
+<body>
+    <!-- header -->
+    <div id="header">
+        <!-- 未登录 -->
+        <div id="signin">
+            <a href="javascript: MOYU.login();"><img src="static/weibo_login.png" /></a>
+        </div>
+        <!-- 已登录 -->
+        <div id="user">
+            <span id="logout">
+                我<img src="" id="user-avatar"><span id="username"></span>又来摸鱼了
+            </span>
+        </div>
+    </div>
+    <!-- 摸鱼控制台 -->
+    <div id="wrapper">
+        <a href="javascript: MOYU.start();" title="不要犹豫了，摸吧" id="moyu-start">开始</a><!--
+     --><a href="javascript: MOYU.end();" title="是时候干活了" id="moyu-end">结束</a><!--
+     --><span>摸鱼</span>
+    </div>
+    <script src="static/zepto.min.js"></script>
+    <script src=" http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey=1615068327" type="text/javascript" charset="utf-8"></script>
+    <script>
+        var MOYU = {
+            // 初始化
+            init : function() {
+                MOYU.get_user_profile();
+            },
+
+            // 获取用户信息
+            get_user_profile : function() {
+                if( WB2.checkLogin() ) {
+                    var cookie = WB2.Cookie.load(),
+                        uid = cookie.uid;
+                    // 获取用户信息
+                    WB2.anyWhere(function(W){
+                        WB2.parseCMD(
+                            '/users/show.json', 
+                            MOYU.show_user_profile, 
+                            { uid : uid }, 
+                            { method : 'GET' }
+                        );
+                    });
+                }
+            },
+
+            // 显示用户信息
+            show_user_profile : function( user ) {
+                if( typeof user != 'object' ) 
+                    return false;
+
+                $('#signin').hide();
+                $('#user-avatar').attr( 'src', user.profile_image_url );
+                $('#username').text( user.screen_name );
+                $('#user').show();
+            },
+
+            // 隐藏用户信息，显示登陆按钮
+            hide_user_profile : function() {
+                $('#user').hide();
+                $('#username').text('');
+                $('#signin').show();
+            }
+        }
+        MOYU.init();
+    </script>
+</body>
+</html>

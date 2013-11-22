@@ -9,3 +9,8 @@ define('DB_HOST', '');
 // 缓存配置
 define('CACHE_HOST', '');
 define('CACHE_PORT', 0);
+
+// 微博OAUTH
+define( "WB_AKEY" , '');
+define( "WB_SKEY" , '');
+define( "WB_CALLBACK_URL" , '');

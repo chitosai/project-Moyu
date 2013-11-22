@@ -20,32 +20,8 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- 
 
 CREATE TABLE IF NOT EXISTS `log` (
-  `id` int(11) NOT NULL COMMENT '用户id',
+  `uid` int(11) NOT NULL COMMENT '用户id',
   `start` timestamp NOT NULL COMMENT '开始时间',
   `end` timestamp NOT NULL COMMENT '结束时间',
-  KEY `id` (`id`)
+  KEY `uid` (`uid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
--- 
--- 导出表中的数据 `log`
--- 
-
-
--- --------------------------------------------------------
-
--- 
--- 表的结构 `user`
--- 
-
-CREATE TABLE IF NOT EXISTS `user` (
-  `id` int(11) NOT NULL auto_increment COMMENT '用户编号',
-  `name` varchar(16) NOT NULL COMMENT '用户名',
-  `pwdhash` char(64) NOT NULL COMMENT '密码hash',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
--- 
--- 导出表中的数据 `user`
--- 
-
