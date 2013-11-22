@@ -30,15 +30,18 @@ if (isset($_REQUEST['code'])) {
 
 if ($token) {
     // var_dump($token);
-    // 授权成功
-    echo '授权完成,<a href="/moyu/index">返回摸鱼</a><br />';
-
-    // 保存用户数据
+    // 保存授权数据
     $cache = new CACHE();
     // 保存token
-    $r = $cache->set( CACHE::get_token_key($token['uid']), $token['access_token'], 0, $token['expires_in'] );
+    $r = $cache->set( CACHE::get_token_key($token['uid']), $token['access_token'], 0/*, $token['expires_in'] 渣浪测试账号授权5年..超过上限了，暂且用默认的1小时吧*/ );
+    if( $r ) {
+        echo '授权完成';
+    } else {
+        echo '保存token失败';
+    }
 } else {
-    echo '授权失败。';
+    echo '授权失败';
 }
 
 ?>
+,<a href="/moyu/index">返回摸鱼</a><br />
