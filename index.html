@@ -35,7 +35,29 @@
 
             // 初始化
             init : function() {
+                // 获取用户数据
                 MOYU.get_user_profile();
+                // 检查是否已在摸鱼
+                $.ajax({
+                    type     : 'GET', 
+                    url      : MOYU.url,
+                    data     : { 'c'         : 'check', 
+                                 'uid'       : MOYU.uid, 
+                                 'token'     : MOYU.token
+                               },
+                    timeout  : 3000,
+                    success  : function(json) {
+                        // ok
+                        var data = JSON.parse(json);
+                        if( data.status == 'OK' ) {
+                            $('#wrapper a').show();
+                            $('#moyu-' + type).hide();
+                        }
+                    },
+                    error   : function(xhr, type) {
+                        console.log('查询状态超时 - INIT');
+                    }
+                });
             },
 
             // 获取用户信息
