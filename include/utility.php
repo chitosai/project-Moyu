@@ -220,8 +220,7 @@ class USER {
         // 如果有额外数据就带上
         if( $data ) $return = array_merge($return, $data);
         // 搞成json送出
-        var_dump($return);
-        // echo json_encode($return);
+        echo json_encode($return);
     }
 
     /**

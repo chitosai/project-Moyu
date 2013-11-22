@@ -21,14 +21,18 @@
     </div>
     <!-- 摸鱼控制台 -->
     <div id="wrapper">
-        <a href="javascript: MOYU.start();" title="不要犹豫了，摸吧" id="moyu-start">开始</a><!--
-     --><a href="javascript: MOYU.end();" title="是时候干活了" id="moyu-end">结束</a><!--
+        <a href="javascript: MOYU.log('start');" title="不要犹豫了，摸吧" id="moyu-start">开始</a><!--
+     --><a href="javascript: MOYU.log('end');" title="是时候干活了" id="moyu-end">结束</a><!--
      --><span>摸鱼</span>
     </div>
     <script src="static/zepto.min.js"></script>
     <script src=" http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey=1615068327" type="text/javascript" charset="utf-8"></script>
     <script>
         var MOYU = {
+            uid : 0,
+            token : 0,
+            url : 'http://rakuen.thec.me/moyu/moyu',
+
             // 初始化
             init : function() {
                 MOYU.get_user_profile();
@@ -37,14 +41,15 @@
             // 获取用户信息
             get_user_profile : function() {
                 if( WB2.checkLogin() ) {
-                    var cookie = WB2.Cookie.load(),
-                        uid = cookie.uid;
+                    var cookie = WB2.Cookie.load();
+                    MOYU.uid = cookie.uid;
+                    MOYU.token = cookie.access_token;
                     // 获取用户信息
                     WB2.anyWhere(function(W){
                         WB2.parseCMD(
                             '/users/show.json', 
                             MOYU.show_user_profile, 
-                            { uid : uid }, 
+                            { uid : cookie.uid }, 
                             { method : 'GET' }
                         );
                     });
@@ -67,6 +72,37 @@
                 $('#user').hide();
                 $('#username').text('');
                 $('#signin').show();
+            },
+
+            // 发出记录请求
+            log : function( type ) {
+                // 判断类型
+                if( type != 'start' && type != 'end' )
+                    return false;
+                // GO
+                $.ajax({
+                    type     : 'GET', 
+                    url      : MOYU.url,
+                    data     : { 'c'         : type, 
+                                 'uid'       : MOYU.uid, 
+                                 'token'     : MOYU.token, 
+                                 'timestamp' : new Date().getTime() 
+                               },
+                    timeout  : 3000,
+                    success  : function(json) {
+                        // ok
+                        var data = JSON.parse(json);
+                        if( data.status == 'OK' ) {
+                            $('#wrapper a').show();
+                            $('#moyu-' + type).hide();
+                        } else {
+                            console.log(data);
+                        }
+                    },
+                    error   : function(xhr, type) {
+                        console.log(xhr, type);
+                    }
+                });
             }
         }
         MOYU.init();
