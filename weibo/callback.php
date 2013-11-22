@@ -44,4 +44,4 @@ if ($token) {
 }
 
 ?>
-,<a href="/moyu/index">返回摸鱼</a><br />
+,<a href="/moyu">返回摸鱼</a><br />
