@@ -28,10 +28,19 @@
     <script src="static/zepto.min.js"></script>
     <script src=" http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey=1615068327" type="text/javascript" charset="utf-8"></script>
     <script>
+        function debug( message ) {
+            if( !message ) return;
+            if( 0 ) {
+                if( arguments.length > 1 )
+                    console.log( arguments );
+                else
+                    console.log( message );
+            }
+        }
         var MOYU = {
             uid : 0,
             token : 0,
-            url : 'http://rakuen.thec.me/moyu/moyu.php',
+            url : 'moyu/moyu.php',
 
             // 初始化
             init : function() {
@@ -66,6 +75,9 @@
                     var cookie = WB2.Cookie.load();
                     MOYU.uid = cookie.uid;
                     MOYU.token = cookie.access_token;
+
+                    debug('WEIBO:uid = ' + MOYU.uid);
+
                     // 获取用户信息
                     WB2.anyWhere(function(W){
                         WB2.parseCMD(
@@ -75,6 +87,8 @@
                             { method : 'GET' }
                         );
                     });
+                } else {
+                    debug('WEIBO:checkLogin = false');
                 }
             },
 
@@ -87,6 +101,8 @@
                 $('#user-avatar').attr( 'src', user.profile_image_url );
                 $('#username').text( user.screen_name );
                 $('#user').show();
+
+                debug('WEIBO:user : ' + user.screen_name);
             },
 
             // 隐藏用户信息，显示登陆按钮
@@ -118,7 +134,7 @@
                             $('#wrapper a').show();
                             $('#moyu-' + type).hide();
                         } else {
-                            console.log(data);
+                            debug(data);
                         }
                     },
                     error   : function(xhr, type) {
@@ -127,7 +143,7 @@
                 });
             }
         }
-        MOYU.init();
+        $(document).ready(MOYU.init);
     </script>
 </body>
 </html>
