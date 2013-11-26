@@ -1,26 +1,35 @@
 var DEBUG = false;
+var URL = 'moyu.php';
 
 /**
  * 摸呀摸
  * 
  */
 var MOYU = {
-    uid : 0,
-    token : 0,
-    url : 'moyu.php',
-
     // 初始化
     init : function() {
         // 显示用户信息
         MOYU.show_user();
         // 检查是否已在摸鱼
+        MOYU.check();
+    },
+
+    // 显示用户信息
+    show_user : function() {
+        if( get_cookie('weibo_user') && get_cookie('weibo_avatar') ) {
+            $('#signin').hide();
+            $('#user-name').text(decodeURIComponent(get_cookie('weibo_user')));
+            $('#user-avatar').attr('src', get_cookie('weibo_avatar'));
+            $('#user').show();
+        }
+    },
+
+    // 检查是否已经在摸鱼
+    check : function() {
         $.ajax({
             type     : 'GET', 
-            url      : MOYU.url,
-            data     : { 'c'         : 'check', 
-                         'uid'       : MOYU.uid, 
-                         'token'     : MOYU.token
-                       },
+            url      : URL,
+            data     : { 'c' : 'check' },
             timeout  : 3000,
             success  : function(json) {
                 // ok
@@ -36,16 +45,6 @@ var MOYU = {
         });
     },
 
-    // 显示用户信息
-    show_user : function() {
-        if( get_cookie('weibo_user') && get_cookie('weibo_avatar') ) {
-            $('#signin').hide();
-            $('#user-name').text(decodeURIComponent(get_cookie('weibo_user')));
-            $('#user-avatar').attr('src', get_cookie('weibo_avatar'));
-            $('#user').show();
-        }
-    },
-
     // 发出记录请求
     log : function( type ) {
         // 判断类型
@@ -54,10 +53,8 @@ var MOYU = {
         // GO
         $.ajax({
             type     : 'GET', 
-            url      : MOYU.url,
-            data     : { 'c'         : type, 
-                         'uid'       : MOYU.uid, 
-                         'token'     : MOYU.token, 
+            url      : URL,
+            data     : { 'c'         : type,
                          'timestamp' : new Date().getTime() 
                        },
             timeout  : 3000,

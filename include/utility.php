@@ -260,6 +260,14 @@ class USER {
      * 
      */
     public static function valid( $uid, $token ) {
+        // 检查授权格式...
+        // TODO: 为什么要做这步？有点多余吧..
+        $token_replaced = preg_replace('/[^a-zA-Z0-9\.,]/', '', $token);
+        if( !is_numeric($uid) || strlen($token_replaced) < strlen($token) ) {
+            USER::fatal('微博授权格式不正确，请重新登录');
+        }
+
+        // 验证授权
         $cache = new CACHE();
         $token_in_cache = $cache->get( CACHE::get_token_key($uid) );
 

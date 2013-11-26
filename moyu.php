@@ -15,7 +15,7 @@ class MOYU {
      * @param string $token 渣浪微博access_token
      * @param string $timestamp 开始摸鱼的时间戳（允许用户自己发送时间戳而不是直接php获取是防止服务器所在时区与用户不一致
      */
-    public static function start( $uid, $token, $timestamp ) {
+    public static function start( $uid, $timestamp ) {
         // 检查时间戳是否合法
         TIMER::valid( $timestamp );
         
@@ -39,7 +39,7 @@ class MOYU {
      * @param string $token 渣浪微博access_token
      * @param string $timestamp 结束摸鱼的时间戳（由用户自行发送，必须保证此时间大于开始时间
      */
-    public static function end( $uid, $token, $end ) {
+    public static function end( $uid, $end ) {
         // 检查时间戳是否合法
         TIMER::valid( $end );
         
@@ -76,7 +76,7 @@ class MOYU {
      * @return TRUE 已经在摸鱼
      * @return FALSE 没在摸鱼
      */
-    public static function check( $uid, $token ) {
+    public static function check( $uid ) {
         $cache = new CACHE();
         // 检查是否在摸鱼
         $start = $cache->get( CACHE::get_start_key($uid) );
@@ -93,25 +93,24 @@ class MOYU {
  * GO
  * 
  */
-if( isset($_GET['c']) && isset($_GET['uid']) && isset($_GET['token']) ) {
-    // 检查输入
-    $token = preg_replace('/[^a-zA-Z0-9\.,]/', '', $_GET['token']);
-    if( !is_numeric($_GET['uid']) || strlen($token) < strlen($_GET['token']) ) {
-        USER::fatal('授权信息格式非法');
+if( isset($_GET['c']) ) {
+    // 获取授权信息
+    if( isset($_COOKIE['weibo_uid']) && isset($_COOKIE['weibo_token']) ) {
+        $uid = $_COOKIE['weibo_uid'];
+        $token = $_COOKIE['weibo_token'];
     } else {
-        $uid = $_GET['uid'];
+        USER::fatal('请先用<del>性</del>新浪微博登陆');
     }
-
     // 检查用户身份
     USER::valid( $uid, $token );
 
 	switch( $_GET['c'] ) {
 		// 开始摸鱼
-        case 'start' : MOYU::start( $uid, $token, $_GET['timestamp'] ); break;
+        case 'start' : MOYU::start( $uid, $_GET['timestamp'] ); break;
         // 结束摸鱼
-        case 'end'   : MOYU::end( $uid, $token, $_GET['timestamp'] ); break;
+        case 'end'   : MOYU::end( $uid, $_GET['timestamp'] ); break;
         // 检查是否在摸鱼
-        case 'check' : MOYU::check( $uid, $token ); break;
+        case 'check' : MOYU::check( $uid ); break;
         // error
         default      : USER::fatal('未知操作');
 	}
