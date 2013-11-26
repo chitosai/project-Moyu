@@ -15,7 +15,7 @@
         <!-- 已登录 -->
         <div id="user">
             <span id="logout">
-                我<img src="" id="user-avatar"><span id="username"></span>又来摸鱼了！
+                我<img src="" id="user-avatar"><span id="user-name"></span>又来摸鱼了！
             </span>
         </div>
     </div>
@@ -26,124 +26,6 @@
      --><span>摸鱼</span>
     </div>
     <script src="static/zepto.min.js"></script>
-    <script src=" http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey=1615068327" type="text/javascript" charset="utf-8"></script>
-    <script>
-        function debug( message ) {
-            if( !message ) return;
-            if( 0 ) {
-                if( arguments.length > 1 )
-                    console.log( arguments );
-                else
-                    console.log( message );
-            }
-        }
-        var MOYU = {
-            uid : 0,
-            token : 0,
-            url : 'moyu.php',
-
-            // 初始化
-            init : function() {
-                // 获取用户数据
-                MOYU.get_user_profile();
-                // 检查是否已在摸鱼
-                $.ajax({
-                    type     : 'GET', 
-                    url      : MOYU.url,
-                    data     : { 'c'         : 'check', 
-                                 'uid'       : MOYU.uid, 
-                                 'token'     : MOYU.token
-                               },
-                    timeout  : 3000,
-                    success  : function(json) {
-                        // ok
-                        var data = JSON.parse(json);
-                        if( data.status == 'TRUE' ) {
-                            $('#moyu-end').show();
-                            $('#moyu-start').hide();
-                        }
-                    },
-                    error   : function(xhr, type) {
-                        console.log('查询状态超时 - INIT');
-                    }
-                });
-            },
-
-            // 获取用户信息
-            get_user_profile : function() {
-                if( WB2.checkLogin() ) {
-                    var cookie = WB2.Cookie.load();
-                    MOYU.uid = cookie.uid;
-                    MOYU.token = cookie.access_token;
-
-                    debug('WEIBO:uid = ' + MOYU.uid);
-
-                    // 获取用户信息
-                    WB2.anyWhere(function(W){
-                        WB2.parseCMD(
-                            '/users/show.json', 
-                            MOYU.show_user_profile, 
-                            { uid : cookie.uid }, 
-                            { method : 'GET' }
-                        );
-                    });
-                } else {
-                    debug('WEIBO:checkLogin = false');
-                }
-            },
-
-            // 显示用户信息
-            show_user_profile : function( user ) {
-                if( typeof user != 'object' ) 
-                    return false;
-
-                $('#signin').hide();
-                $('#user-avatar').attr( 'src', user.profile_image_url );
-                $('#username').text( user.screen_name );
-                $('#user').show();
-
-                debug('WEIBO:user : ' + user.screen_name);
-            },
-
-            // 隐藏用户信息，显示登陆按钮
-            hide_user_profile : function() {
-                $('#user').hide();
-                $('#username').text('');
-                $('#signin').show();
-            },
-
-            // 发出记录请求
-            log : function( type ) {
-                // 判断类型
-                if( type != 'start' && type != 'end' )
-                    return false;
-                // GO
-                $.ajax({
-                    type     : 'GET', 
-                    url      : MOYU.url,
-                    data     : { 'c'         : type, 
-                                 'uid'       : MOYU.uid, 
-                                 'token'     : MOYU.token, 
-                                 'timestamp' : new Date().getTime() 
-                               },
-                    timeout  : 3000,
-                    success  : function(json) {
-                        // ok
-                        var data = JSON.parse(json);
-                        if( data.status == 'OK' ) {
-                            $('#wrapper a').show();
-                            $('#moyu-' + type).hide();
-                        } else {
-                            debug(data);
-                        }
-                    },
-                    error   : function(xhr, type) {
-                        console.log(xhr, type);
-                    }
-                });
-            }
-        }
-        $(document).ready(MOYU.init);
-    </script>
+    <script src="static/moyu.js"></script>
 </body>
 </html>
