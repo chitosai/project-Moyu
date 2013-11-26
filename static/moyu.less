@@ -23,10 +23,95 @@ legend{color:#000}
  * (๑¯ω¯๑)
  * 
  */
-#user{
-    display: none;
+html,body{
+    background: url('s3-background.png');
+    font: 14px '微软雅黑', 'Microsoft YaHei', 'Hiragino Sans GB', Arial, sans-serif;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+#header{
+    background: #222;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    color: #ddd;
+    text-align: right;
+    padding: 10px;
+    img{
+        vertical-align: middle;
+        height: 22px;
+    }
+    #signin{
+        img{
+            width: 110px;
+        }
+    }
+    #user{
+        display: none;
+    }
+    #user-avatar{
+        width: 22px;
+        margin: 0 5px;
+    }
+    #user-name{
+        margin-right: 5px;
+    }
 }
 
-#moyu-end{
-    display: none;
+#wrapper{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    -webkit-transition: background 1s ease;
+    -moz-transition: background 1s ease;
+    -ms-transition: background 1s ease;
+    -o-transition: background 1s ease;
+    transition: background 1s ease;
+    & > div{
+        margin: auto;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+    }
+    // 控制台
+    #action{
+        width: 100%;
+        height: 180px;
+        color: #FAFA88;
+        font-size: 10em;
+        text-align: center;
+        text-shadow: 0 0 50px rgba(0, 0, 0, .3);
+        -webkit-transition: font-size .3s ease, -webkit-transform .3s ease .5s;
+        -moz-transition: font-size .3s ease, -moz-transform .3s ease .5s;
+        -ms-transition: font-size .3s ease, -ms-transform .3s ease .5s;
+        -o-transition: font-size .3s ease, -o-transform .3s ease .5s;
+        transition: font-size .3s ease, transform .3s ease .5s;
+        a{
+            color: #fff;
+            text-decoration: none;
+        }
+        #moyu-end{
+            display: none;
+        }
+    }
+    // 计时器
+    #timer{
+        display: none;
+        width: 50%;
+        height: 50%;
+    }
+
+    // 摸鱼状态下
+    &.moyuing{
+        background: #222;
+        #action{
+            font-size: 2em;
+            -webkit-transform: translate3d(0, 100%, 0);
+            -moz-transform: translate3d(0, 100%, 0);
+            -ms-transform: translate3d(0, 100%, 0);
+            -o-transform: translate3d(0, 100%, 0);
+            transform: translate3d(0, 100%, 0);
+        }
+    }
 }

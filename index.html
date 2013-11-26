@@ -14,16 +14,24 @@
         </div>
         <!-- 已登录 -->
         <div id="user">
-            <span id="logout">
-                我<img src="" id="user-avatar"><span id="user-name"></span>又来摸鱼了！
-            </span>
+            我<img src="" id="user-avatar"><span id="user-name"></span>又来摸鱼了！
         </div>
     </div>
     <!-- 摸鱼控制台 -->
     <div id="wrapper">
-        <a href="javascript: MOYU.log('start');" title="不要犹豫了，摸吧" id="moyu-start">开始</a><!--
-     --><a href="javascript: MOYU.log('end');" title="是时候干活了" id="moyu-end">结束</a><!--
-     --><span>摸鱼</span>
+        <!-- 按钮 -->
+        <div id="action">
+            <a href="javascript: MOYU.log('start');" title="不要犹豫了，摸吧" id="moyu-start">开始</a><!--
+         --><a href="javascript: MOYU.log('end');" title="是时候干活了" id="moyu-end">结束</a><!--
+         --><span>摸鱼</span>
+        </div>
+        <!-- 计时器 -->
+        <div id="timer">
+            <p id="text"><span id="something"></span>又因为你而延迟了</p>
+            <p id="hour"><span id="timer-hour"></span>小时</p>
+            <p id="minute"><span id="timer-minute"></span>分</p>
+            <p id="second"><span id="timer-second"></span>秒</p>
+        </div>
     </div>
     <script src="static/zepto.min.js"></script>
     <script src="static/moyu.js"></script>

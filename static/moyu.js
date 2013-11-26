@@ -40,6 +40,7 @@ var MOYU = {
                 if( data.status == 'TRUE' ) {
                     $('#moyu-end').show();
                     $('#moyu-start').hide();
+                    $('#wrapper').addClass('moyuing');
                 }
             },
             error   : function(xhr, type) {
@@ -65,8 +66,15 @@ var MOYU = {
                 // ok
                 var data = JSON.parse(json);
                 if( data.status == 'OK' ) {
-                    $('#wrapper a').show();
-                    $('#moyu-' + type).hide();
+                    if( type == 'start' ) {
+                        $('#moyu-start').hide();
+                        $('#moyu-end').show();
+                        $('#wrapper').addClass('moyuing');
+                    } else {
+                        $('#moyu-start').show();
+                        $('#moyu-end').hide();
+                        $('#wrapper').removeClass('moyuing');
+                    }
                 } else {
                     debug(data);
                 }
