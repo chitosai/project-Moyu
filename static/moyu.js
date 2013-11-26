@@ -1,5 +1,6 @@
 var DEBUG = false;
 var URL = 'moyu.php';
+var WEIBO_AUTHED = false;
 
 /**
  * 摸呀摸
@@ -21,11 +22,13 @@ var MOYU = {
             $('#user-name').text(decodeURIComponent(get_cookie('weibo_user')));
             $('#user-avatar').attr('src', get_cookie('weibo_avatar'));
             $('#user').show();
+            WEIBO_AUTHED = true;
         }
     },
 
     // 检查是否已经在摸鱼
     check : function() {
+        if( !WEIBO_AUTHED ) return false;
         $.ajax({
             type     : 'GET', 
             url      : URL,
@@ -72,7 +75,7 @@ var MOYU = {
                 console.log(xhr, type);
             }
         });
-    }
+    },
 }
 
 
