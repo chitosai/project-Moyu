@@ -12,7 +12,6 @@ class MOYU {
      * 开始摸鱼
      *
      * @param string $uid 渣浪微博uid
-     * @param string $token 渣浪微博access_token
      * @param string $timestamp 开始摸鱼的时间戳（允许用户自己发送时间戳而不是直接php获取是防止服务器所在时区与用户不一致
      */
     public static function start( $uid, $timestamp ) {
@@ -36,7 +35,6 @@ class MOYU {
      * 结束摸鱼
      *
      * @param string $uid 渣浪微博uid
-     * @param string $token 渣浪微博access_token
      * @param string $timestamp 结束摸鱼的时间戳（由用户自行发送，必须保证此时间大于开始时间
      */
     public static function end( $uid, $end ) {
