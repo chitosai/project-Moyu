@@ -143,8 +143,22 @@ var TIMER = {
         TIMER.h.text( Math.floor(elapsed/3600000) );
         TIMER.m.text( Math.floor(elapsed%3600000/60000) );
         TIMER.s.text( Math.floor(elapsed%60000/1000) );
-        TIMER.ms.text( Math.floor(elapsed%1000) );
-    }
+        TIMER.ms.text( fix_number( Math.floor(elapsed%1000), 3 ) );
+    },
+}
+
+/**
+ * 补齐数字
+ * 
+ */
+function fix_number( number, length ) {
+    if( arguments.length != 2 ) return false;
+    number = number.toString();
+
+    while( number.length < length ) 
+        number = '0' + number;
+
+    return number;
 }
 
 

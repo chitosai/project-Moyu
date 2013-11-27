@@ -19,6 +19,27 @@ input,textarea,select{*font-size:100%}
 legend{color:#000}
 
 
+.transform (...) {
+  -webkit-transform: @arguments;
+     -moz-transform: @arguments;
+      -ms-transform: @arguments;
+       -o-transform: @arguments;
+          transform: @arguments;
+}
+.transition (...) {
+  -webkit-transition: @arguments;
+     -moz-transition: @arguments;
+      -ms-transition: @arguments;
+       -o-transition: @arguments;
+          transition: @arguments;
+}
+.animation( @arg ) {
+    -webkit-animation: @arg;
+    -moz-animation: @arg;
+    animation: @arg;
+}
+
+
 /*
  * (๑¯ω¯๑)
  * 
@@ -60,11 +81,7 @@ html,body{
 #wrapper{
     width: 100%;
     height: 100%;
-    -webkit-transition: background 1s ease;
-    -moz-transition: background 1s ease;
-    -ms-transition: background 1s ease;
-    -o-transition: background 1s ease;
-    transition: background 1s ease;
+    .transition(background 1s ease);
     & > div{
         margin: auto;
         position: absolute;
@@ -130,6 +147,7 @@ html,body{
             }
             top: 20px;
             left: 40px;
+            .animation(swing 5s ease 0 infinite);
         }
         #minute{
             font-size: 3em;
@@ -138,19 +156,22 @@ html,body{
             }
             top: 160px;
             left: 180px;
+            .animation(swing 2s ease 0 infinite);
         }
         #second{
             font-size: 6em;
             left: 305px;
             top: 20px;
+            .animation(swing 4s ease 0 infinite);
         }
         #millisecond{
             font-size: 2.2em;
             top: 120px;
             left: 330px;
             b{
-                color: #ccc;
+                color: #555;
             }
+            .animation(swing 1s ease 0 infinite);
         }
     }
 
@@ -159,20 +180,51 @@ html,body{
         background: #222;
         #action{
             font-size: 2em;
-            -webkit-transform: translate3d(0, 150%, 0);
-            -moz-transform: translate3d(0, 150%, 0);
-            -ms-transform: translate3d(0, 150%, 0);
-            -o-transform: translate3d(0, 150%, 0);
-            transform: translate3d(0, 150%, 0);
+            .transform(translate3d(0, 150%, 0));
         }
         #timer{
             opacity: 1;
             top: 0;
-            -webkit-transform: translate3d(0, -80px, 0);
-            -moz-transform: translate3d(0, -80px, 0);
-            -ms-transform: translate3d(0, -80px, 0);
-            -o-transform: translate3d(0, -80px, 0);
-            transform: translate3d(0, -80px, 0);
+            .transform(translate3d(0, -80px, 0));
         }
     }
+}
+
+@-webkit-keyframes swing {
+    0% { .transform(translate3d(1px -1px, -1px)); opacity: .8; }
+    3% { .transform(rotate(0deg) translate3d(1px, 1px, 0)); opacity: 1; }
+    6% { .transform(rotate(0deg) translate3d(0, 0, -1px)); }
+    10% { .transform(rotate(1deg) translate3d(0, 0px, 0)); }
+    12% { .transform(rotate(0deg)); opacity: .75; }
+    48% { .transform(translate3d(0, 0, 0)); }
+    50% { .transform(translate3d(7px, 0, 0)); }
+    51% { .transform(translate3d(0, 1px, 0)); }
+    52% { .transform(translate3d(1px, -4px, 0)); }
+    55% { .transform(translate3d(0, 0, 0)); }
+    71% { .transform(rotate(0deg)); }
+    72% { .transform(rotate(1deg)); }
+    75% { .transform(rotate(0deg)); }
+    80% { .transform(rotate(-1deg) translate3d(-1px, 1px, 0)); }
+    85% { .transform(rotate(-1deg)); }
+    88% { .transform(rotate(0) translate3d(0, 1px, 1px)); }
+    100% { opacity: 1; }
+}
+@keyframes swing {
+    0% { .transform(translate3d(1px -1px, -1px)); opacity: .8; }
+    3% { .transform(rotate(0deg) translate3d(1px, 1px, 0)); opacity: 1; }
+    6% { .transform(rotate(0deg) translate3d(0, 0, -1px)); }
+    10% { .transform(rotate(1deg) translate3d(0, 0px, 0)); }
+    12% { .transform(rotate(0deg)); opacity: .75; }
+    48% { .transform(translate3d(0, 0, 0)); }
+    50% { .transform(translate3d(7px, 0, 0)); }
+    51% { .transform(translate3d(0, 1px, 0)); }
+    52% { .transform(translate3d(1px, -4px, 0)); }
+    55% { .transform(translate3d(0, 0, 0)); }
+    71% { .transform(rotate(0deg)); }
+    72% { .transform(rotate(1deg)); }
+    75% { .transform(rotate(0deg)); }
+    80% { .transform(rotate(-1deg) translate3d(-1px, 1px, 0)); }
+    85% { .transform(rotate(-1deg)); }
+    88% { .transform(rotate(0) translate3d(0, 1px, 1px)); }
+    100% { opacity: 1; }
 }
