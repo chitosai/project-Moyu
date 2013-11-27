@@ -1,4 +1,4 @@
-var DEBUG = false;
+var DEBUG = true;
 var URL = 'moyu.php';
 var WEIBO_AUTHED = false;
 
@@ -100,6 +100,56 @@ var MOYU = {
         $('#something').text(something);
     },
 
+    // 统计
+    statistics : function() {
+        $.ajax({
+            type     : 'GET', 
+            url      : URL,
+            data     : { 'c' : 'statistics'},
+            timeout  : 3000,
+            success  : function(json) {
+                // ok
+                var data = JSON.parse(json);
+                if( data.status == 'OK' ) {
+                    MOYU.statistics_callback(data['logs'])
+                } else {
+                    debug(data);
+                }
+            },
+            error   : function(xhr, type) {
+                console.log(xhr, type);
+            }
+        });
+    },
+
+    // 生成统计数据
+    statistics_callback : function( logs ) {
+        var first_time = 9999999999999, // 第一次摸鱼时间
+            total_time = 0, // 累计摸鱼时长
+            total_times = 0; // 累计摸鱼次数
+
+        for( i in logs ) {
+            var log = logs[i]['log'],
+                st = parseInt(log['start']),
+                et = parseInt(log['end']);
+
+            if( st < first_time )
+                first_time = st;
+
+            total_time += (et - st);
+            total_times++;
+        }
+
+        var result = {
+            '我'            : decodeURIComponent(get_cookie('weibo_user')),
+            '从'            : TIMER.ts2date(first_time), // 第一次摸鱼时间
+            '以来，总共摸鱼' : total_times, // 累计摸鱼次数
+            '次，累计消耗了' : TIMER.ms2t(total_time), // 累计摸鱼时长
+            '真是不虚此生'   : null,
+        }
+        debug(result);
+    },
+
 }
 
 
@@ -145,6 +195,19 @@ var TIMER = {
         TIMER.s.text( Math.floor(elapsed%60000/1000) );
         TIMER.ms.text( fix_number( Math.floor(elapsed%1000), 3 ) );
     },
+
+    // 毫秒转时间
+    ms2t : function(ms) {
+        ms = parseInt(ms);
+        return '<b>' + Math.floor(ms/3600000) + '</b> 小时 <b>' + Math.floor(ms%3600000/60000) + '</b> 分 <b>' + 
+                Math.floor(ms%60000/1000) + '</b> 秒 <b>' + Math.floor(ms%1000) + '</b> 毫秒';
+    },
+
+    // 时间戳转日期
+    ts2date : function(timestamp) {
+        var date = new Date(parseInt(timestamp));
+        return date.getFullYear() + ' 年 ' + date.getMonth() + ' 月 ' + date.getDate() + ' 日 ';
+    }
 }
 
 /**

@@ -83,6 +83,24 @@ class MOYU {
         else
             USER::send( 'FALSE' );
     }
+
+    /**
+     * 查询并返回所有log
+     * 
+     * @param  [int] $uid
+     * @return [object] {'logs' : [ 'log' : { 'start' : 1234567890123, 'end' : 1234567890123 } ] }
+     */
+    public static function statistics( $uid ) {
+        $db = new DB();
+        $logs = $db->query('SELECT `start`, `end` FROM `log` WHERE `uid` = ' . $uid);
+
+        // 当返回值为bool(false)时才是出错，uid不存在时可能返回array(0)
+        if( $logs === false ) {
+            USER::error('获取数据时出错');
+        } else {
+            USER::ok( array('logs' => $logs) );
+        }
+    }
 }
 
 
@@ -109,6 +127,8 @@ if( isset($_GET['c']) ) {
         case 'end'   : MOYU::end( $uid, $_GET['timestamp'] ); break;
         // 检查是否在摸鱼
         case 'check' : MOYU::check( $uid ); break;
+        // 统计
+        case 'statistics' : MOYU::statistics( $uid ); break;
         // error
         default      : USER::fatal('未知操作');
 	}
