@@ -11,6 +11,8 @@ var SOMETHINGS = ['人类进化', '中华民族的伟大复兴', '全面进入�
 var MOYU = {
     // 初始化
     init : function() {
+        // 初始化返回值弹层
+        RESULT.init();
         // 显示用户信息
         MOYU.show_user();
         // 检查是否已在摸鱼
@@ -42,8 +44,10 @@ var MOYU = {
                 if( data.status == 'TRUE' ) {
                     MOYU.start( data['start_time'] );
                 }
+                RESULT.hide();
             },
             error   : function(xhr, type) {
+                RESULT.hide();
                 console.log('查询状态超时 - INIT');
             }
         });
@@ -87,9 +91,11 @@ var MOYU = {
                 } else {
                     debug(data);
                 }
+                RESULT.hide();
             },
             error   : function(xhr, type) {
                 console.log(xhr, type);
+                RESULT.hide();
             }
         });
     },
@@ -118,6 +124,7 @@ var MOYU = {
             },
             error   : function(xhr, type) {
                 console.log(xhr, type);
+                RESULT.hide();
             }
         });
     },
@@ -141,15 +148,58 @@ var MOYU = {
         }
 
         var result = {
-            '我'            : decodeURIComponent(get_cookie('weibo_user')),
-            '从'            : TIMER.ts2date(first_time), // 第一次摸鱼时间
-            '以来，总共摸鱼' : total_times, // 累计摸鱼次数
-            '次，累计消耗了' : TIMER.ms2t(total_time), // 累计摸鱼时长
-            '真是不虚此生'   : null,
+            '&nbsp;'      : decodeURIComponent(get_cookie('weibo_user')),
+            '从'          : TIMER.ts2date(first_time), // 第一次摸鱼时间
+            '至今，共摸鱼' : '<b>' + total_times + '</b> 次', // 累计摸鱼次数
+            '累计消耗了'   : TIMER.ms2t(total_time), // 累计摸鱼时长
+            '的人参'       : '可喜可贺、可喜可贺。',
         }
-        debug(result);
+        RESULT.fill_dl(result);
+        RESULT.display();
     },
 
+}
+
+
+/**
+ * 显示返回结果
+ * 
+ */
+var RESULT = {
+    dom : null,
+    // 初始化
+    init : function() {
+        RESULT.dom = $('#return');
+        RESULT.dom.on('click', '#overlay', RESULT.hide);
+        RESULT.title_height = parseInt($('#result-title').css('height')) + 4;
+
+        // 初始化loading
+        $(document).on('ajaxBeforeSend', RESULT.loading);
+    },
+    // 显示
+    display : function() {
+        RESULT.dom.addClass('active result');
+    },
+    // 显示loading动画
+    loading : function() {
+        RESULT.dom.addClass('active loading');
+    },
+    // 关闭
+    hide : function() {
+        RESULT.dom.removeClass('active result loading');
+    },
+    // 向result中填数据
+    fill_dl : function( array ) {
+        var container = $('#result'),
+            dl = $('<dl>');
+        for( key in array ) {
+            $('<dt>').html(key).appendTo(dl);
+            $('<dd>').html(array[key]).appendTo(dl);
+        }
+        container.children('dl').remove();
+        container.append(dl);
+        container.height( parseInt(dl.css('height')) + RESULT.title_height );
+    }
 }
 
 
@@ -209,6 +259,7 @@ var TIMER = {
         return date.getFullYear() + ' 年 ' + date.getMonth() + ' 月 ' + date.getDate() + ' 日 ';
     }
 }
+
 
 /**
  * 补齐数字
