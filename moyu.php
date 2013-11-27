@@ -81,7 +81,7 @@ class MOYU {
         // 检查是否在摸鱼
         $start = $cache->get( CACHE::get_start_key($uid) );
         if( $start ) 
-            USER::send( 'TRUE' );
+            USER::send( 'TRUE', array( 'start_time' => $start ) );
         else
             USER::send( 'FALSE' );
     }
