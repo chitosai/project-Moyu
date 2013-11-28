@@ -178,7 +178,7 @@ var RESULT = {
     },
     // 显示
     display : function() {
-        RESULT.dom.addClass('active result');
+        RESULT.dom.removeClass('loading').addClass('active result');
     },
     // 显示loading动画
     loading : function() {
