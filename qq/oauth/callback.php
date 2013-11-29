@@ -33,7 +33,8 @@ if ($oauth) {
         setcookie('oauth_token', $access_token, $expire,  COOKIE_PATH, COOKIE_DOMAIN, false, true);
 
         // 获取用户名/头像地址
-        $user = $qc->get_user_info();
+        $qc_oauthed = new QC( $access_token, $id );
+        $user = $qc_oauthed->get_user_info();
         $user_name = urlencode($user['nickname']);
         $user_avatar = $user['figureurl'];
 
