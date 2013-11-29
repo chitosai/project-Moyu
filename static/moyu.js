@@ -4,9 +4,11 @@ var AUTHED = false;
 
 var SOMETHINGS = ['人类进化', '中华民族的伟大复兴', '全面进入小康社会', '世界和平', '梦想'];
 var WORD_REPLACE_MAP = {
-    'status'    : '返回值',
-    'start_time': '上次摸鱼开始时间',
-    'message'   : '说明',
+    'status'         : '返回值',
+    'start_time'     : '摸鱼开始时间',
+    'end_time'       : '摸鱼结束时间',
+    'last'           : '消耗人参',
+    'message'        : '说明',
 }
 
 /**
@@ -47,7 +49,7 @@ var MOYU = {
                 // ok
                 var data = JSON.parse(json);
                 if( data.status == 'TRUE' ) {
-                    MOYU.start( data['start_time'] );
+                    MOYU.start( data );
                 }
                 RESULT.hide();
             },
@@ -59,20 +61,22 @@ var MOYU = {
     },
 
     // 开始摸鱼
-    start : function( start_time ) {
+    start : function( data ) {
         $('#moyu-start').hide();
         $('#moyu-end').show();
         $('#wrapper').addClass('moyuing');
         MOYU.say_something();
-        TIMER.start(start_time);
+        TIMER.start(data['start_time']);
+        RESULT.hide();
     },
 
     // 结束摸鱼
-    end : function() {
+    end : function( data ) {
         $('#moyu-start').show();
         $('#moyu-end').hide();
         $('#wrapper').removeClass('moyuing');
         TIMER.stop();
+        RESULT.display(data);
     },
 
     // 发出记录请求
@@ -92,8 +96,7 @@ var MOYU = {
                 // ok
                 var data = JSON.parse(json);
                 if( data.status == 'OK' ) {
-                    MOYU[type]();
-                    RESULT.hide();
+                    MOYU[type](data);
                 } else {
                     RESULT.display(data);
                 }            
@@ -116,7 +119,7 @@ var MOYU = {
         $.ajax({
             type     : 'GET', 
             url      : URL,
-            data     : { 'c' : 'statistics'},
+            data     : { 'c' : 'statistics' },
             timeout  : 3000,
             success  : function(json) {
                 // ok
@@ -213,6 +216,8 @@ var RESULT = {
                 return WORD_REPLACE_MAP[keyword];
             } else if( /^\d{13}$/.test(word) ) {
                 return TIMER.ts2time(word);
+            } else if( /^\d+$/.test(word) ) {
+                return TIMER.ms2t(word);
             }
         }
         return word;
@@ -251,7 +256,7 @@ var TIMER = {
     },
     // 结束计时
     stop : function() {
-        clearInterval(TIMER.tick);
+        TIMER.tick = clearInterval(TIMER.tick);
         TIMER.start_time = 0;
     },
     // 每帧
@@ -266,8 +271,18 @@ var TIMER = {
     // 毫秒转时间
     ms2t : function(ms) {
         ms = parseInt(ms);
-        return '<b>' + Math.floor(ms/3600000) + '</b> 小时 <b>' + Math.floor(ms%3600000/60000) + '</b> 分 <b>' + 
-                Math.floor(ms%60000/1000) + '</b> 秒 <b>' + Math.floor(ms%1000) + '</b> 毫秒';
+        var text = '',
+            hour = Math.floor(ms/3600000),
+            minute = Math.floor(ms%3600000/60000),
+            second = Math.floor(ms%60000/1000),
+            ms = Math.floor(ms%1000);
+
+        if( hour ) text += '<b>' + hour + '</b> 小时 ';
+        if( minute ) text += '<b>' + minute + '</b> 分 ';
+        if( second ) text += '<b>' + second + '</b> 秒 ';
+        if( ms ) text += '<b>' + ms + '</b> 毫秒';
+
+        return text;
     },
 
     // 时间戳转日期
@@ -280,7 +295,7 @@ var TIMER = {
     ts2time : function(timestamp) {
         var time = new Date(parseInt(timestamp));
         return time.getFullYear() + '/' + (time.getMonth()+1) + '/' + time.getDate() + '&nbsp;-&nbsp;' + 
-                time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds();
+                fix_number(time.getHours(),2) + ':' + fix_number(time.getMinutes(),2) + ':' + fix_number(time.getSeconds(),2);
     }
 }
 

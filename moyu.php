@@ -61,7 +61,7 @@ class MOYU {
                     // 清除缓存中的开始摸鱼标识
                     $cache->delete( CACHE::get_start_key($id) );
                     // 输出
-                    USER::ok();
+                    USER::ok( array('start_time' => $start, 'end_time' => $end, 'last' => $end-$start ) );
                 }
             }
         }
