@@ -3,6 +3,11 @@ var URL = 'moyu.php';
 var AUTHED = false;
 
 var SOMETHINGS = ['人类进化', '中华民族的伟大复兴', '全面进入小康社会', '世界和平', '梦想'];
+var WORD_REPLACE_MAP = {
+    'status'    : '返回值',
+    'start_time': '上次摸鱼开始时间',
+    'message'   : '说明',
+}
 
 /**
  * 摸呀摸
@@ -190,15 +195,26 @@ var RESULT = {
     },
     // 向result中填数据
     fill_dl : function( array ) {
-        var container = $('#result'),
-            dl = $('<dl>');
+        var container = $('#result-table').empty(),
+            tr = null;
         for( key in array ) {
-            $('<dt>').html(key).appendTo(dl);
-            $('<dd>').html(array[key]).appendTo(dl);
+            tr = $('<tr>');
+            $('<td>').html(RESULT.process_data(key)).appendTo(tr);
+            $('<td>').html(RESULT.process_data(array[key])).appendTo(tr);
+            tr.appendTo(container);
         }
-        container.children('dl').remove();
-        container.append(dl);
-        container.height( parseInt(dl.css('height')) + RESULT.title_height );
+        $('#result').height( parseInt(container.css('height')) + RESULT.title_height );
+    },
+    // 处理数据
+    process_data : function( word ) {
+        for( keyword in WORD_REPLACE_MAP ) {
+            if( keyword == word ) {
+                return WORD_REPLACE_MAP[keyword];
+            } else if( /^\d{13}$/.test(word) ) {
+                return TIMER.ts2time(word);
+            }
+        }
+        return word;
     }
 }
 
@@ -256,7 +272,14 @@ var TIMER = {
     // 时间戳转日期
     ts2date : function(timestamp) {
         var date = new Date(parseInt(timestamp));
-        return date.getFullYear() + ' 年 ' + date.getMonth() + ' 月 ' + date.getDate() + ' 日 ';
+        return date.getFullYear() + ' 年 ' + (date.getMonth()+1) + ' 月 ' + date.getDate() + ' 日 ';
+    },
+
+    // 时间戳转时间
+    ts2time : function(timestamp) {
+        var time = new Date(parseInt(timestamp));
+        return time.getFullYear() + '/' + (time.getMonth()+1) + '/' + time.getDate() + '&nbsp;-&nbsp;' + 
+                time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds();
     }
 }
 

@@ -115,7 +115,7 @@ if( isset($_GET['c']) ) {
         $id = $_COOKIE['oauth_id'];
         $token = $_COOKIE['oauth_token'];
     } else {
-        USER::fatal('请先用QQ账号登陆');
+        USER::fatal( '请先用<a href=' . OAUTH_URL . '>QQ账号登录</a>' );
     }
     // 检查用户身份
     USER::valid( $id, $token );

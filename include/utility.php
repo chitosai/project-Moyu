@@ -265,7 +265,7 @@ class USER {
         $token_replaced = preg_replace('/[^A-Z0-9]/', '', $token);
         $id_replaced = preg_replace('/[^A-Z0-9]/', '', $id);
         if( strlen($id) != 32 || strlen($token) != 32 || strlen($id_replaced) < strlen($id) || strlen($token_replaced) < strlen($token) ) {
-            USER::fatal('授权格式不正确，请重新登录');
+            USER::fatal( '授权格式不正确，请<a href=' . OAUTH_URL . '>重新登录</a>' );
         }
 
         // 验证授权
@@ -274,13 +274,13 @@ class USER {
 
         // 缓存中没有token信息，大概是过期了？
         if( !$token_in_cache ) {
-            USER::fatal( '授权过期，请重新登陆' );
+            USER::fatal( '授权过期，请<a href=' . OAUTH_URL . '>重新登录</a>' );
         }
         // 有token但与用户传递来的不同
         else if( $token != $token_in_cache ) {
             // 清除缓存中的token
             $cache->delete( CACHE::get_token_key($id) );
-            USER::fatal( '授权异常，请重新登陆' );
+            USER::fatal( '授权异常，请<a href=' . OAUTH_URL . '>重新登录</a>' );
         }
         // 没有问题
         return true;
