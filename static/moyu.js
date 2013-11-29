@@ -157,6 +157,7 @@ var MOYU = {
             '从'          : TIMER.ts2date(first_time), // 第一次摸鱼时间
             '至今，共摸鱼' : '<b>' + total_times + '</b> 次', // 累计摸鱼次数
             '累计消耗了'   : TIMER.ms2t(total_time), // 累计摸鱼时长
+            '平均每次'     : TIMER.ms2t(total_time/total_times), // 平均每次时长
             '的人参'       : '可喜可贺、可喜可贺。',
         }
         RESULT.display(result);
