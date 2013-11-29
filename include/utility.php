@@ -162,11 +162,11 @@ class CACHE {
     }
 
     // for moyu
-    static function get_token_key( $uid ) {
-        return $uid . ':WEIBO_TOKEN';
+    static function get_token_key( $id ) {
+        return $id . ':TOKEN';
     }
-    static function get_start_key( $uid ) {
-        return $uid . ':START';
+    static function get_start_key( $id ) {
+        return $id . ':START';
     }
 }
 
@@ -259,27 +259,28 @@ class USER {
      * 检查用户身份
      * 
      */
-    public static function valid( $uid, $token ) {
+    public static function valid( $id, $token ) {
         // 检查授权格式...
         // TODO: 为什么要做这步？有点多余吧..
-        $token_replaced = preg_replace('/[^a-zA-Z0-9\.,]/', '', $token);
-        if( !is_numeric($uid) || strlen($token_replaced) < strlen($token) ) {
-            USER::fatal('微博授权格式不正确，请重新登录');
+        $token_replaced = preg_replace('/[^A-Z0-9]/', '', $token);
+        $id_replaced = preg_replace('/[^A-Z0-9]/', '', $id);
+        if( strlen($id) != 32 || strlen($token) != 32 || strlen($id_replaced) < strlen($id) || strlen($token_replaced) < strlen($token) ) {
+            USER::fatal('授权格式不正确，请重新登录');
         }
 
         // 验证授权
         $cache = new CACHE();
-        $token_in_cache = $cache->get( CACHE::get_token_key($uid) );
+        $token_in_cache = $cache->get( CACHE::get_token_key($id) );
 
         // 缓存中没有token信息，大概是过期了？
         if( !$token_in_cache ) {
-            USER::fatal( '微博授权过期，请重新登陆' );
+            USER::fatal( '授权过期，请重新登陆' );
         }
         // 有token但与用户传递来的不同
         else if( $token != $token_in_cache ) {
             // 清除缓存中的token
-            $cache->delete( CACHE::get_token_key($uid) );
-            USER::fatal( '微博授权异常，请重新登陆' );
+            $cache->delete( CACHE::get_token_key($id) );
+            USER::fatal( '授权异常，请重新登陆' );
         }
         // 没有问题
         return true;

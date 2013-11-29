@@ -14,8 +14,3 @@ define('CACHE_MOYU_EXPIRE', 3600 * 24); // “开始摸鱼”标识最长有效�
 // cookie配置
 define('COOKIE_PATH', '');
 define('COOKIE_DOMAIN', '');
-
-// 微博OAUTH
-define("WB_AKEY" , '');
-define("WB_SKEY" , '');
-define("WB_CALLBACK_URL" , '');

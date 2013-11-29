@@ -21,8 +21,8 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 DROP TABLE IF EXISTS `log`;
 CREATE TABLE `log` (
-  `uid` int(10) unsigned NOT NULL COMMENT '用户id',
+  `id` char(32) NOT NULL COMMENT '用户id',
   `start` bigint(10) unsigned NOT NULL COMMENT '开始时间',
   `end` bigint(10) unsigned NOT NULL COMMENT '结束时间',
-  KEY `uid` (`uid`)
+  KEY `uid` (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

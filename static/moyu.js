@@ -1,6 +1,6 @@
 var DEBUG = true;
 var URL = 'moyu.php';
-var WEIBO_AUTHED = false;
+var AUTHED = false;
 
 var SOMETHINGS = ['人类进化', '中华民族的伟大复兴', '全面进入小康社会', '世界和平', '梦想'];
 
@@ -21,18 +21,18 @@ var MOYU = {
 
     // 显示用户信息
     show_user : function() {
-        if( get_cookie('weibo_user') && get_cookie('weibo_avatar') ) {
+        if( get_cookie('oauth_user') && get_cookie('oauth_avatar') ) {
             $('#signin').hide();
-            $('#user-name').text(decodeURIComponent(get_cookie('weibo_user')));
-            $('#user-avatar').attr('src', get_cookie('weibo_avatar'));
+            $('#user-name').text(decodeURIComponent(get_cookie('oauth_user')));
+            $('#user-avatar').attr('src', get_cookie('oauth_avatar'));
             $('#user').show();
-            WEIBO_AUTHED = true;
+            AUTHED = true;
         }
     },
 
     // 检查是否已经在摸鱼
     check : function() {
-        if( !WEIBO_AUTHED ) return false;
+        if( !AUTHED ) return false;
         $.ajax({
             type     : 'GET', 
             url      : URL,
@@ -88,10 +88,10 @@ var MOYU = {
                 var data = JSON.parse(json);
                 if( data.status == 'OK' ) {
                     MOYU[type]();
+                    RESULT.hide();
                 } else {
-                    debug(data);
-                }
-                RESULT.hide();
+                    RESULT.display(data);
+                }            
             },
             error   : function(xhr, type) {
                 console.log(xhr, type);
@@ -119,7 +119,7 @@ var MOYU = {
                 if( data.status == 'OK' ) {
                     MOYU.statistics_callback(data['logs'])
                 } else {
-                    debug(data);
+                    RESULT.display(data);
                 }
             },
             error   : function(xhr, type) {
@@ -148,14 +148,13 @@ var MOYU = {
         }
 
         var result = {
-            '&nbsp;'      : decodeURIComponent(get_cookie('weibo_user')),
+            '&nbsp;'      : decodeURIComponent(get_cookie('oauth_user')),
             '从'          : TIMER.ts2date(first_time), // 第一次摸鱼时间
             '至今，共摸鱼' : '<b>' + total_times + '</b> 次', // 累计摸鱼次数
             '累计消耗了'   : TIMER.ms2t(total_time), // 累计摸鱼时长
             '的人参'       : '可喜可贺、可喜可贺。',
         }
-        RESULT.fill_dl(result);
-        RESULT.display();
+        RESULT.display(result);
     },
 
 }
@@ -177,7 +176,8 @@ var RESULT = {
         $(document).on('ajaxBeforeSend', RESULT.loading);
     },
     // 显示
-    display : function() {
+    display : function( array ) {
+        RESULT.fill_dl(array);
         RESULT.dom.removeClass('loading').addClass('active result');
     },
     // 显示loading动画
@@ -296,15 +296,15 @@ function debug( message ) {
  */
 function get_cookie(c_name) {
     if (document.cookie.length > 0) {
-        c_start = document.cookie.indexOf(c_name + "=")
+        c_start = document.cookie.indexOf(c_name + "=");
         if (c_start != -1) {
-            c_start = c_start + c_name.length + 1
-            c_end = document.cookie.indexOf(";", c_start)
-            if (c_end == -1) c_end = document.cookie.length
-            return unescape(document.cookie.substring(c_start, c_end))
+            c_start = c_start + c_name.length + 1;
+            c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1) c_end = document.cookie.length;
+            return unescape(document.cookie.substring(c_start, c_end));
         }
     }
-    return ""
+    return "";
 }
 
 $(document).ready(MOYU.init);
