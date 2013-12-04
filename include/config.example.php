@@ -24,3 +24,4 @@ $QQ_OAUTH_CONFIG = array(
     'scope'       => '',
     'errorReport' => false,
 );
+define('OAUTH_URL' ,'');
