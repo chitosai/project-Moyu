@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="cn">
+<head>
+    <meta charset="UTF-8">
+    <title>Project · 摸鱼</title>
+    <link rel="stylesheet" href="static/moyu.css">
+</head>
+<body>
+    <!-- header -->
+    <div id="header">
+        <!-- 未登录 -->
+        <div id="signin">
+            <a href="qq/oauth/index.php"><img src="static/qq_login.png"></a>
+        </div>
+        <!-- 已登录 -->
+        <div id="user">
+            我<img src="" id="user-avatar"><span id="user-name"></span>又来摸鱼了！
+            <a href="javascript: MOYU.statistics();" id="user-statistics">摸鱼统计</a>
+        </div>
+    </div>
+    <!-- 摸鱼控制台 -->
+    <div id="wrapper">
+        <!-- 按钮 -->
+        <div id="action">
+            <a href="javascript: MOYU.log('start');" title="不要犹豫了，摸吧" id="moyu-start">开始</a><!--
+         --><a href="javascript: MOYU.log('end');" title="是时候干活了" id="moyu-end">结束</a><!--
+         --><span>摸鱼</span>
+        </div>
+        <!-- 计时器 -->
+        <div id="timer">
+            <p id="text"><b id="something"></b>又因为你摸鱼而晚了</p>
+            <p id="hour"><b id="timer-hour"></b>小时</p>
+            <p id="minute"><b id="timer-minute"></b>分</p>
+            <p id="second"><b id="timer-second"></b>秒</p>
+            <p id="millisecond"><b id="timer-millisecond"></b>毫秒</p>
+        </div>
+    </div>
+    <!-- 返回值表 -->
+    <div id="return">
+        <!-- 背景黑色层 -->
+        <div id="overlay">
+            <div id="loading-text">
+                <p>与服务器通信中</p>
+                <span class="loading-animation">#</span>
+                <span class="loading-animation">#</span>
+                <span class="loading-animation">#</span>
+                <span class="loading-animation">#</span>
+                <span class="loading-animation">#</span>
+            </div>
+        </div>
+        <!-- 返回值列表 -->
+        <div id="result">
+            <!-- 标题？ -->
+            <div id="result-title">摸鱼时计</div>
+            <table id="result-table"></table>
+        </div>
+    </div>
+    <!-- build:js static/moyu.min.js -->
+    <script src="static/zepto.js"></script>
+    <script src="static/moyu.js"></script>
+    <!-- endbuild -->
+</body>
+</html>
