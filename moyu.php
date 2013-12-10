@@ -52,9 +52,13 @@ class MOYU {
             if( floatval($end) <= floatval($start) ) {
                 USER::fatal( '结束时间怎么会比开始时间还早！闹哪样（╯－＿－）╯' );
             } else {
+                // 获取uid
+                $uid = USER::uid($id);
+
                 // 向数据库写入一次摸鱼log
                 $db = new DB();
-                $r = $db->insert('log', array( 'id' => $id, 'start' => $start, 'end' => $end ));
+                // 插入log
+                $r = $db->insert('log', array( 'id' => $uid, 'start' => $start, 'end' => $end ));
                 if( $r === false ) {
                     USER::error( '写入数据库时出错', array( 'MYSQL_ERROR' => mysql_error( $db->con )) );
                 } else {
@@ -91,8 +95,11 @@ class MOYU {
      * @return [object] {'logs' : [ 'log' : { 'start' : 1234567890123, 'end' : 1234567890123 } ] }
      */
     public static function statistics( $id ) {
+        // 获取uid
+        $uid = USER::uid($id);
+        
         $db = new DB();
-        $logs = $db->query('SELECT `start`, `end` FROM `log` WHERE `id` = \'' . $id . '\'');
+        $logs = $db->query('SELECT `start`, `end` FROM `log` WHERE `id` = \'' . $uid . '\'');
 
         // 当返回值为bool(false)时才是出错，id不存在时可能返回array(0)
         if( $logs === false ) {

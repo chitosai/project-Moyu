@@ -285,4 +285,23 @@ class USER {
         // 没有问题
         return true;
     }
+
+    /**
+     * 根据qq_open_id获取uid 
+     * 
+     */
+    public static function uid( $qq_id ) {
+        $db = new DB();
+        // 获取用户uid
+        $uid = $db->get('id', 'id', 'qq_id=\'' . $qq_id . '\'');
+        // 没有uid说明是第一次使用，写入新uid
+        if( !$uid ) $uid = $db->insert('id', array( 'qq_id' => $qq_id ));
+        // 还有错误的话就他妈见鬼了
+        if( !$uid ) {
+            $mysql_error = mysql_error();
+            USER::fatal( '创建用户出错', array( 'MYSQL' => $mysql_error ));
+        }
+        unset($db);
+        return $uid;
+    }
 }
