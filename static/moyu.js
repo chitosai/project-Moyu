@@ -25,7 +25,6 @@ var MOYU = {
         // 检查是否已在摸鱼
         MOYU.check();
     },
-
     // 显示用户信息
     show_user : function() {
         if( get_cookie('oauth_user') && get_cookie('oauth_avatar') ) {
@@ -36,7 +35,6 @@ var MOYU = {
             AUTHED = true;
         }
     },
-
     // 检查是否已经在摸鱼
     check : function() {
         if( !AUTHED ) return false;
@@ -59,7 +57,6 @@ var MOYU = {
             }
         });
     },
-
     // 开始摸鱼
     start : function( data ) {
         $('#moyu-start').hide();
@@ -69,7 +66,6 @@ var MOYU = {
         TIMER.start(data['start_time']);
         RESULT.hide();
     },
-
     // 结束摸鱼
     end : function( data ) {
         $('#moyu-start').show();
@@ -78,7 +74,6 @@ var MOYU = {
         TIMER.stop();
         RESULT.display(data);
     },
-
     // 发出记录请求
     log : function( type ) {
         // 判断类型
@@ -107,13 +102,11 @@ var MOYU = {
             }
         });
     },
-
     // 随机填入一条主语..
     say_something : function() {
         var something = SOMETHINGS[Math.floor(Math.random()*SOMETHINGS.length)];
         $('#something').text(something);
     },
-
     // 统计
     statistics : function() {
         $.ajax({
@@ -136,7 +129,6 @@ var MOYU = {
             }
         });
     },
-
     // 生成统计数据
     statistics_callback : function( logs ) {
         var first_time = 9999999999999, // 第一次摸鱼时间
@@ -160,9 +152,9 @@ var MOYU = {
                 '&nbsp;'      : decodeURIComponent(get_cookie('oauth_user')),
                 '从'          : TIMER.ts2date(first_time), // 第一次摸鱼时间
                 '至今，共摸鱼' : '<b>' + total_times + '</b> 次', // 累计摸鱼次数
-                '累计消耗了'   : TIMER.ms2t(total_time), // 累计摸鱼时长
-                '平均每次'     : TIMER.ms2t(total_time/total_times), // 平均每次时长
-                '的人参'       : '可喜可贺、可喜可贺。',
+                '累计消耗了'   : TIMER.ms2t(total_time, true), // 累计摸鱼时长
+                '平均每次'     : TIMER.ms2t(total_time/total_times, true), // 平均每次时长
+                '的人参'       : '<a href="javascript: MOYU.calendar();">摸鱼日历</a>',
             }
         } else {
             var result = {
@@ -171,8 +163,14 @@ var MOYU = {
             }
         }
         RESULT.display(result);
-    },
 
+        // 生成日历
+        CALENDAR.calendar(first_time, logs);
+    },
+    // 显示日历
+    calendar : function() {
+        $('#return').addClass('calendar');
+    },
 }
 
 
@@ -202,7 +200,10 @@ var RESULT = {
     },
     // 关闭
     hide : function() {
-        RESULT.dom.removeClass('active result loading');
+        if( RESULT.dom.hasClass('calendar') )
+            RESULT.dom.removeClass('calendar');
+        else
+            RESULT.dom.removeClass();
     },
     // 向result中填数据
     fill_dl : function( array ) {
@@ -224,7 +225,7 @@ var RESULT = {
             } else if( /^\d{13}$/.test(word) ) {
                 return TIMER.ts2time(word);
             } else if( /^\d+$/.test(word) ) {
-                return TIMER.ms2t(word);
+                return TIMER.ms2t(word, true);
             }
         }
         return word;
@@ -276,7 +277,7 @@ var TIMER = {
     },
 
     // 毫秒转时间
-    ms2t : function(ms) {
+    ms2t : function(ms, highlight_number) {
         ms = parseInt(ms);
         var text = '',
             hour = Math.floor(ms/3600000),
@@ -284,10 +285,10 @@ var TIMER = {
             second = Math.floor(ms%60000/1000),
             ms = Math.floor(ms%1000);
 
-        if( hour ) text += '<b>' + hour + '</b> 小时 ';
-        if( minute ) text += '<b>' + minute + '</b> 分 ';
-        if( second ) text += '<b>' + second + '</b> 秒 ';
-        if( ms ) text += '<b>' + ms + '</b> 毫秒';
+        if( hour ) text += (highlight_number ? '<b>' : '') + hour + (highlight_number ? '</b>' : '') + ' 小时 ';
+        if( minute ) text += (highlight_number ? '<b>' : '')  + minute + (highlight_number ? '</b>' : '') + ' 分 ';
+        if( second ) text += (highlight_number ? '<b>' : '')  + second + (highlight_number ? '</b>' : '') + ' 秒 ';
+        if( ms ) text += (highlight_number ? '<b>' : '')  + ms + (highlight_number ? '</b>' : '') + ' 毫秒';
 
         return text;
     },
@@ -303,7 +304,139 @@ var TIMER = {
         var time = new Date(parseInt(timestamp));
         return time.getFullYear() + '/' + (time.getMonth()+1) + '/' + time.getDate() + '&nbsp;-&nbsp;' + 
                 fix_number(time.getHours(),2) + ':' + fix_number(time.getMinutes(),2) + ':' + fix_number(time.getSeconds(),2);
-    }
+    },
+
+    // 时间戳转 时:分:秒
+    ts2hms : function(timestamp) {
+        var time = new Date(parseInt(timestamp));
+        return fix_number(time.getHours(),2) + ':' + fix_number(time.getMinutes(),2) + ':' + fix_number(time.getSeconds(),2);
+    },
+}
+
+
+/**
+ * 日历
+ * 
+ */
+var CALENDAR = {
+    /**
+     * 生成从某个日期至今的每个月的日历
+     *
+     * @param int first_time 第一次摸鱼时间
+     * @param object logs 全部log
+     */
+    calendar : function(first_time, logs) {
+        var first_date = new Date(first_time),
+            // first_date = new Date(2012,1,2),
+            now = new Date(),
+            first_year = first_date.getFullYear(),
+            this_year = now.getFullYear(),
+            i, j, html = '';
+
+        // 是否超过一年
+        if( this_year - first_year ) {
+            // 生成第一年份
+            for( i = first_date.getMonth() + 1; i <= 12; i++ ) {
+                html += CALENDAR.generate(first_year, i);
+            }
+
+            // 生成中间所有年份
+            for( i = first_year + 1; i < this_year; i++ ) {
+                for( j = 1; j <= 12; j++ ) {
+                    html += CALENDAR.generate(i, j);
+                }
+            }
+
+            // 最后一年
+            if( this_year - first_year ) {
+                for( i = 1; i <= now.getMonth() + 1; i++ ) {
+                    html += CALENDAR.generate(this_year, i);
+                }
+            }
+        } else {
+            for( i = first_date.getMonth() + 1; i <= now.getMonth() + 1; i++ ) {
+                html += CALENDAR.generate(this_year, i);
+            }
+        }
+
+        // 填数据
+        document.querySelector('#calendar').innerHTML = html;
+
+        // 高亮有摸鱼记录的日期
+        for( i in logs ) {
+            CALENDAR.highlight(logs[i]['log']);
+        }
+    },
+    /**
+     * 生成一个月的日历
+     * 
+     * @param int year 年份，4位完整数字
+     * @param int month 月份，不用补齐两位
+     */
+    generate : function(year, month) {
+        // 本月第一天是星期几（距星期日离开的天数）
+        var startDay = new Date(year, month - 1, 1).getDay();
+
+        // 本月有多少天(即最后一天的getDate()，但是最后一天不知道，我们可以用“上个月的0来表示本月的最后一天”)
+        var nDays = new Date(year, month, 0).getDate();
+
+        // 开始画日历
+        var numRow = 0;      // 记录行的个数，到达7的时候创建tr
+        var i, j, today = 1; // 日期
+        var html = '';
+        var weekdays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
+        html += '<div class="date">';
+        // 标注日期
+        html += '<h3>' + year + '年' + month + '月</h3>';
+
+        // date table
+        html += '<table class=\'date-table\'>';
+        // 第一行
+        html += '<thead><tr>';
+        // 生成星期
+        for( i in weekdays ) {
+            html += '<th>' + weekdays[i] + '</th>';
+        }
+        html += '</tr></thead><tbody><tr>'
+        // 生成空白日期
+        for (i = 0; i < startDay; i++) {
+            html += '<td></td>';
+            numRow++;
+        }
+        for (j = 1; j <= nDays; j++) {
+            html += '<td id="date-' + year + '-' + month + '-' + today + '"><div class="day">' + j + '</div><div class="logs-container"></div></td>';
+            numRow++;
+            today++;
+            if (numRow == 7) {  // 如果已经到一行（一周）了，重新创建tr
+                numRow = 0;
+                html += '</tr><tr>';
+            }
+        }
+
+        html += '</tbody></table></div>';
+        return html;
+    },
+    /**
+     * 高亮某个日期
+     *
+     * @param timestamp date 要高亮的日期
+     */
+    highlight : function(date) {
+        // 获取开始时间
+        var start_time = new Date(parseInt(date['start'])),
+            selector = start_time.getFullYear() + '-' + (start_time.getMonth() + 1) + '-' + start_time.getDate(),
+            duration = date['end'] - date['start'],
+            logs = $('#date-' + selector).addClass('highlighted').children('.logs-container'),
+            dom = logs.children('.logs');
+
+        // 写入log
+        var log = '- ' + TIMER.ts2hms(date['start']) + ' 开始，持续：' + TIMER.ms2t(date['end'] - date['start']) + '\n';
+        if( !dom || !dom.length ) {
+            dom = $('<div>').addClass('logs').appendTo(logs);
+        }
+        $('<p>').html(log).appendTo(dom);
+    },
 }
 
 
