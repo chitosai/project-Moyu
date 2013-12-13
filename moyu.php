@@ -64,6 +64,8 @@ class MOYU {
                 } else {
                     // 清除缓存中的开始摸鱼标识
                     $cache->delete( CACHE::get_start_key($id) );
+                    // 清楚统计缓存
+                    $cache->delete( CACHE::get_statistics_key($id) );
                     // 输出
                     USER::ok( array('start_time' => $start, 'end_time' => $end, 'last' => $end-$start ) );
                 }
@@ -97,9 +99,22 @@ class MOYU {
     public static function statistics( $id ) {
         // 获取uid
         $uid = USER::uid($id);
-        
-        $db = new DB();
-        $logs = $db->query('SELECT `start`, `end` FROM `log` WHERE `id` = \'' . $uid . '\'');
+
+        // 检查缓存
+        $cache = new CACHE();
+        $logs = $cache->get( CACHE::get_statistics_key($id) );
+
+        // 无缓存从数据库中查询
+        if( $logs === false ) {
+            $db = new DB();
+            $logs = $db->query('SELECT `start`, `end` FROM `log` WHERE `id` = \'' . $uid . '\'');
+
+            // 然后缓存
+            // 缓存时间为默认参数1h
+            $cache->set( CACHE::get_statistics_key($id), json_encode($logs) );
+        } else {
+            $logs = json_decode($logs);
+        }
 
         // 当返回值为bool(false)时才是出错，id不存在时可能返回array(0)
         if( $logs === false ) {

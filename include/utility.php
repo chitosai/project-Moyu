@@ -168,6 +168,9 @@ class CACHE {
     static function get_start_key( $id ) {
         return $id . ':START';
     }
+    static function get_statistics_key( $id ) {
+        return $id . ':STATISTICS';
+    }
 }
 
 
