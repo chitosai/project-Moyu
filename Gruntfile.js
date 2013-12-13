@@ -9,7 +9,7 @@ module.exports = function(grunt) {
         separator: ';'
       },
       js: {
-        src: ['static/zepto.js', 'static/moyu.js'],
+        src: ['static/zepto.js', 'static/dev.*.js'],
         dest: 'static/moyu.concated.js'
       },
       html: {
