@@ -375,6 +375,13 @@ html,body{
                 &:first-child, &:nth-child(7){
                     color: #999;
                 }
+                &.hidden{
+                    visibility: hidden;
+                }
+                &.today{
+                    font-weight: bold;
+                    text-shadow: 0 0 10px #999;
+                }
                 &.highlighted{
                     .day{
                         background: #D52828;
@@ -390,6 +397,8 @@ html,body{
                         position: relative;
                         .logs{
                             color: #fff;
+                            font-weight: normal;
+                            text-shadow: none;
                             opacity: 0;
                             position: absolute;
                             top: -30px;

@@ -60,14 +60,19 @@ var CALENDAR = {
     generate : function(year, month) {
         // 本月第一天是星期几（距星期日离开的天数）
         var startDay = new Date(year, month - 1, 1).getDay();
+        // 获取当前日期
+        var today = new Date(),
+            today_y = today.getFullYear(),
+            today_m = today.getMonth() + 1,
+            today_d = today.getDate();
 
         // 本月有多少天(即最后一天的getDate()，但是最后一天不知道，我们可以用“上个月的0来表示本月的最后一天”)
         var nDays = new Date(year, month, 0).getDate();
 
         // 开始画日历
         var numRow = 0;      // 记录行的个数，到达7的时候创建tr
-        var i, j, today = 1; // 日期
-        var html = '';
+        var i, j, day = 1; // 日期
+        var html = '', flag = '';
         var weekdays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
         html += '<div class="date">';
@@ -89,9 +94,21 @@ var CALENDAR = {
             numRow++;
         }
         for (j = 1; j <= nDays; j++) {
-            html += '<td id="date-' + year + '-' + month + '-' + today + '"><div class="day">' + j + '</div><div class="logs-container"></div></td>';
+            // 超过当天的日期隐藏
+            if( (year >= today_y) && (month >= today_m) ) {
+                if( day > today_d )
+                    flag = ' class="hidden"';
+                else if( day == today_d )
+                    flag = ' class="today"';
+                else
+                    flag = '';
+            } else {
+                flag = '';
+            }
+
+            html += '<td id="date-' + year + '-' + month + '-' + day + '"' + flag + '><div class="day">' + j + '</div><div class="logs-container"></div></td>';
             numRow++;
-            today++;
+            day++;
             if (numRow == 7) {  // 如果已经到一行（一周）了，重新创建tr
                 numRow = 0;
                 html += '</tr><tr>';
