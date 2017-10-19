@@ -60,7 +60,7 @@ class MOYU {
                 // 插入log
                 $r = $db->insert('log', array( 'id' => $uid, 'start' => $start, 'end' => $end ));
                 if( $r === false ) {
-                    USER::error( '写入数据库时出错', array( 'MYSQL_ERROR' => mysql_error( $db->con )) );
+                    USER::error( '写入数据库时出错', array( 'MYSQL_ERROR' => $db->con->error ) );
                 } else {
                     // 清除缓存中的开始摸鱼标识
                     $cache->delete( CACHE::get_start_key($id) );

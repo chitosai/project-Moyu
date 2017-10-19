@@ -21,7 +21,7 @@ class DB {
     }
     function query($sql='') {
         $res = $this->con->query($sql);
-        return $res->fetch_array(MYSQLI_ASSOC);
+        return $res->fetch_all(MYSQLI_ASSOC);
     }
     function row($options) {
         $default = array (
