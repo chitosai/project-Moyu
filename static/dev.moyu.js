@@ -122,9 +122,8 @@ var MOYU = {
             total_time = 0, // 累计摸鱼时长
             total_times = 0; // 累计摸鱼次数
 
-        for( i in logs ) {
-            var log = logs[i]['log'],
-                st = parseInt(log['start']),
+        for( let log of logs ) {
+            let st = parseInt(log['start']),
                 et = parseInt(log['end']);
 
             if( st < first_time )
