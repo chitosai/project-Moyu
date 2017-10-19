@@ -23,6 +23,29 @@ class DB {
         $res = $mysqli->query($sql);
         return $res->fetch_array(MYSQLI_ASSOC);
     }
+    function row($options) {
+        $default = array (
+            'table' => '',
+            'fields' => '*',
+            'condition' => '1',
+            'order' => '1'
+        );
+        $options = array_merge($default,$options);
+        $sql = "SELECT {$options['fields']} FROM {$options['table']} WHERE {$options['condition']} ORDER BY {$options['order']}";
+        $result = $this->query($sql);
+        if (empty($result[0])) return false;
+        return $result[0];
+    }
+    function get($table=null,$field=null,$conditions='1') {
+        if ($table===null || $field===null) return false;
+        $result=$this->row(array(
+            'table' => $table,
+            'condition' => $conditions,
+            'fields' => $field
+        ));
+        if (empty($result[$field])) return false;
+        return $result[$field];
+    }
     function insert($table=null,$array_of_values=array()) {
         if ($table===null || empty($array_of_values) || !is_array($array_of_values)) return false;
         $fields=array(); $values=array();
