@@ -47,8 +47,8 @@ var CALENDAR = {
         document.querySelector('#calendar').innerHTML = html;
 
         // 高亮有摸鱼记录的日期
-        for( i in logs ) {
-            CALENDAR.highlight(logs[i]['log']);
+        for( let log of logs ) {
+            CALENDAR.highlight(log);
         }
     },
     /**
