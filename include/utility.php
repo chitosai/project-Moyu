@@ -20,7 +20,7 @@ class DB {
         $this->con->close();
     }
     function query($sql='') {
-        $res = $mysqli->query($sql);
+        $res = $this->con->query($sql);
         return $res->fetch_array(MYSQLI_ASSOC);
     }
     function row($options) {
@@ -52,7 +52,7 @@ class DB {
         foreach ($array_of_values as $id => $value) {
             $fields[]=$id;
             if (is_array($value) && !empty($value[0])) $values[]=$value[0];
-            else $values[]="'".mysql_real_escape_string($value,$this->con)."'";
+            else $values[]="'".$this->con->real_escape_string($value)."'";
         }
         $s = "INSERT INTO $table (".implode(',',$fields).') VALUES ('.implode(',',$values).')';
         $res = $this->con->query($s);
