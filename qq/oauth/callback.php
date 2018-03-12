@@ -42,7 +42,7 @@ if ($oauth) {
         setcookie('oauth_user', $user_name, $expire, COOKIE_PATH, COOKIE_DOMAIN);
         setcookie('oauth_avatar', $user_avatar, $expire, COOKIE_PATH, COOKIE_DOMAIN);
 
-        echo '授权完成<script>window.location.href = "/";</script>';
+        echo '授权完成<script>window.location.href = "/moyu/";</script>';
     } else {
         echo '保存token失败';
     }
